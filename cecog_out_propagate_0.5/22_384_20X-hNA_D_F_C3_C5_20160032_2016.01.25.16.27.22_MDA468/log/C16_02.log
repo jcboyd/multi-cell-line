@@ -1,0 +1,6 @@
+2018-04-25 01:56:54,307 8942                     INFO    - Frame 0, cellanalyzer.process (ms): 13470
+2018-04-25 01:56:54,308 8942                     INFO    - Frame 0, Tracking (ms):   1
+2018-04-25 01:56:54,309 8942                     INFO    - Frame 0, Classification (ms):   0
+2018-04-25 01:56:54,598 8942                     INFO    - Frame 0, rest (ms): 288
+2018-04-25 01:56:54,599 8942                     INFO    - Frame 0, duration (ms): 13761
+2018-04-25 01:56:54,604 8942                     INFO    - 1 image sets analyzed, 13767 ms per image set
