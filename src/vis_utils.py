@@ -8,7 +8,7 @@ import h5py
 from skimage.morphology import erosion, disk
 from skimage.transform import rescale
 from sklearn.manifold import TSNE
-from umap import UMAP
+# from umap import UMAP
 import seaborn as sns
 
 

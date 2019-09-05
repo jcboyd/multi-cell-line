@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import h5py
-from utils import *
+from src.utils import *
 
 
 wells_to_remove = {
@@ -98,7 +98,7 @@ class FeatureReader(object):
         self.wells = [well for well in self.f_feats]
         fields = [pos for pos in self.f_feats['%s/position/' % self.wells[0]]]
         imgs = [(well, field) for well in self.wells for field in fields]
-        self.imgs = filter(lambda x : not x in wells_to_remove[self.plate], imgs)
+        self.imgs = list(filter(lambda x : not x in wells_to_remove[self.plate], imgs))
         self.cell_line = cell_line
 
     def get_ids(self):
@@ -127,7 +127,7 @@ class FeatureReader(object):
 
         feats = [self.f_feats['%s/position/%s/feature/%s/object_features' % 
             (well, pos, channel)].value for well, pos in self.imgs]
-        feats = filter(lambda x: not x.shape == (0, 0), feats)
+        feats = list(filter(lambda x: not x.shape == (0, 0), feats))
         return np.vstack(feats)
 
     def get_feature_names(self, channel):
@@ -141,7 +141,7 @@ class FeatureReader(object):
 
         """
 
-        return [channel + '_' + feature[0] for feature in 
+        return [channel + '_' + feature[0].decode("utf-8") for feature in 
             self.f['definition/feature/%s/object_features' % channel]]
 
     def get_centers(self, channel):
@@ -157,8 +157,8 @@ class FeatureReader(object):
 
         centers = [self.f_feats['%s/position/%s/feature/%s/center' % 
             (well, pos, channel)].value for well, pos in self.imgs]
-        centers = filter(lambda x: not x.shape == (0, 0), centers)
-        return map(list, np.hstack(centers))
+        centers = list(filter(lambda x: not x.shape == (0, 0), centers))
+        return list(map(list, np.hstack(centers)))
 
     def get_classifications(self, channel):
         """
@@ -224,6 +224,6 @@ class FeatureReader(object):
 
         """
 
-        print 'Saving data...'
+        print('Saving data...')
         self.data.to_pickle('/tmp/%s.pkl' % self.plate)
-        print 'Done!'
+        print('Done!')

@@ -191,7 +191,7 @@ def multitask_autoencoder(input_dim, nb_hidden, l=1e-3):
     return model, encoder
 
 
-def domain_adversarial_autoencoder(input_shape, nb_hidden, lam, l=1e-3):
+def domain_adversarial_autoencoder(input_shape, nb_domains, nb_hidden, lam, l=1e-3):
 
     x_input = Input(shape=(input_shape,))
 
@@ -210,7 +210,7 @@ def domain_adversarial_autoencoder(input_shape, nb_hidden, lam, l=1e-3):
     # gradient reversal layer
     x = GradientReversalLayer(nb_hidden)(encoding)
 
-    x_aux = Dense(2, activation='softmax', name='aux',
+    x_aux = Dense(nb_domains, activation='softmax', name='aux',
                   kernel_initializer='glorot_uniform',
                   kernel_regularizer=l2(l))(x)
 
