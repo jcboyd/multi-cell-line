@@ -126,7 +126,7 @@ class FeatureReader(object):
         """
 
         feats = [self.f_feats['%s/position/%s/feature/%s/object_features' % 
-            (well, pos, channel)].value for well, pos in self.imgs]
+            (well, pos, channel)][()] for well, pos in self.imgs]
         feats = list(filter(lambda x: not x.shape == (0, 0), feats))
         return np.vstack(feats)
 
@@ -156,7 +156,7 @@ class FeatureReader(object):
         """
 
         centers = [self.f_feats['%s/position/%s/feature/%s/center' % 
-            (well, pos, channel)].value for well, pos in self.imgs]
+            (well, pos, channel)][()] for well, pos in self.imgs]
         centers = list(filter(lambda x: not x.shape == (0, 0), centers))
         return list(map(list, np.hstack(centers)))
 
@@ -165,7 +165,7 @@ class FeatureReader(object):
         """
 
         labels = [self.f_feats['%s/position/%s/feature/%s/' % 
-            (well, pos, channel) + 'object_classification/prediction'].value 
+            (well, pos, channel) + 'object_classification/prediction'][()] 
             for well, pos in self.imgs]
         return [label[0] for label in np.hstack(labels)]
 

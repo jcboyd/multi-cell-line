@@ -6,9 +6,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import h5py
 from skimage.morphology import erosion, disk
-from skimage.transform import rescale
+from skimage.transform import resize
 from sklearn.manifold import TSNE
-# from umap import UMAP
 import seaborn as sns
 
 
@@ -77,10 +76,10 @@ class ImageCropper:
         return contours
 
     def get_masks(self):
-        return self.properties['image/region'].value.reshape((3, 1040, 1392))
+        return self.properties['image/region'][()].reshape((3, 1040, 1392))
 
     def get_mask_crop(self, bounding_box, padding=0):
-        primary, secondary, tertiary = map(self.get_contours, self.get_masks())
+        primary, secondary, tertiary = list(map(self.get_contours, self.get_masks()))
         masks = np.dstack([primary, secondary, tertiary])
 
         height, width, _ = masks.shape
@@ -99,7 +98,7 @@ class ImageCropper:
     def get_image(self):
 
         """Returns tuple of image channels from cellh5 file"""
-        img = self.properties['image/channel/'].value.reshape((3, 1040, 1392))
+        img = self.properties['image/channel/'][()].reshape((3, 1040, 1392))
 
         """The following were derived by averaging the 99.9 percentiles of
         field 1 images in the wells of dataset 0, concatenating corresponding
@@ -110,7 +109,7 @@ class ImageCropper:
         # cy5 = self.normalise_channel(img[1], 8.975) #202.65)
         # cy3 = self.normalise_channel(img[2], 51.175) #160.975)
 
-        dapi, cy5, cy3 = map(self.normalise_channel, img)
+        dapi, cy5, cy3 = list(map(self.normalise_channel, img))
         return np.dstack([cy5, cy3, dapi])
 
     def get_crops(self, centers, padding=0, rescale_factor=1):
@@ -120,8 +119,11 @@ class ImageCropper:
 
         for center in centers:
             crop = self.get_image_crop(img, center, padding)
+            #print(crop.shape)
             crop = crop.astype('float32') / 255
-            crop = rescale(crop, rescale_factor, mode='constant')
+            h, w = crop.shape[:2]
+            re_h, re_w = int(rescale_factor * h), int(rescale_factor * w)
+            crop = resize(crop, output_shape=(re_h, re_w, 3))
             crops.append(crop)
         return crops
 
@@ -194,7 +196,7 @@ def image_crop_training_set(df_data, ch5_folder, padding, rescale):
         # remove mishappen crops
         w = h = 2 * padding * rescale
         d = 3
-        crops = filter(lambda x : x.shape == (h, w, d), crops)
+        crops = list(filter(lambda x : x.shape == (h, w, d), crops))
         all_crops.extend(crops)
 
     return np.stack(all_crops)
@@ -210,7 +212,7 @@ def plot_embedded(ax, embedding, labels):
                embedding[idx_dmso, 1],
                color='grey', label='DMSO', s=60, alpha=0.8, edgecolors='black')
 
-    non_neutral_moas = filter(lambda x : x != 'Neutral', np.unique(labels))
+    non_neutral_moas = list(filter(lambda x : x != 'Neutral', np.unique(labels)))
 
     for i, moa in enumerate(non_neutral_moas):
         idx_label = labels == moa
