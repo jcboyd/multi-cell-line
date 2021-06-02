@@ -213,7 +213,7 @@ tqdm==4.32.1
 traitlets==4.3.2
 umap-learn==0.3.10
 unicodecsv==0.14.1
-urllib3==1.24.2
+urllib3==1.26.5
 virtualenv==16.7.5
 wcwidth==0.1.7
 webencodings==0.5.1
